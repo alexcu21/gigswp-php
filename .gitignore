@@ -1,0 +1,7 @@
+.qodo
+.vscode
+.DS_Store
+/vendor
+/node_modules
+/config/db.php
+.env
