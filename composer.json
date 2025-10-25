@@ -1,0 +1,16 @@
+{
+    "name": "alexcu21/gigswp",
+    "description": "WP Job Listing application",
+    "authors": [
+        {
+            "name": "Alex Cuadra",
+            "email": "alexcu21@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Framework\\": "Framework/",
+            "App\\": "App/"
+        }
+    }
+}
