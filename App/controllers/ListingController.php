@@ -3,28 +3,34 @@
 namespace App\Controllers;
 
 use Framework\Database;
+use Framework\Validation;
 
-class ListingController{
+class ListingController
+{
     protected $db;
 
-    public function __construct(){
+    public function __construct()
+    {
         $config = require basePath('config/db.php');
         $this->db = new Database($config);
     }
 
-    public function index(){
-        $listings = $this->db->query('SELECT * FROM listings LIMIT 6')->fetchAll();
-        
+    public function index()
+    {
+        $listings = $this->db->query('SELECT * FROM listings')->fetchAll();
+
         loadView('listings/index', [
             'listings' => $listings
         ]);
     }
 
-    public function create(){
+    public function create()
+    {
         loadView('listings/create');
     }
 
-    public function show($params){
+    public function show($params)
+    {
         $config = require basePath('config/db.php');
         $db = new Database($config);
 
@@ -34,10 +40,10 @@ class ListingController{
             'id' => $id,
         ];
 
-        $listing = $db->query( 'SELECT * FROM listings WHERE id = :id', $params)->fetch();
+        $listing = $db->query('SELECT * FROM listings WHERE id = :id', $params)->fetch();
 
         //check if listing exists
-        if(!$listing){
+        if (!$listing) {
             ErrorController::notFound('Listing not found');
             return;
         }
@@ -46,4 +52,191 @@ class ListingController{
             'listing' => $listing
         ]);
     }
+    /**
+     * Store data in the database
+     * 
+     * return void
+     */
+
+    public function store()
+    {
+        $allowedFields = ['title', 'description', 'salary', 'requirements', 'benefits', 'tags', 'company', 'address', 'city', 'state', 'phone', 'email'];
+
+        $newListingData = array_intersect_key($_POST, array_flip($allowedFields));
+
+        $newListingData['user_id'] = 1;
+
+        $newListingData = array_map('sanitize', $newListingData);
+
+        $requieredFields = ['title', 'description', 'salary', 'city', 'state', 'email'];
+
+        $errors = [];
+
+        foreach ($requieredFields as $field) {
+            if (empty($newListingData[$field]) || !Validation::string($newListingData[$field])) {
+                $errors[$field] = ucfirst($field) . ' is required';
+            }
+        }
+
+        if (!empty($errors)) {
+            loadView('listings/create', [
+                'errors' => $errors,
+                'listing' => $newListingData
+            ]);
+        } else {
+            //submit data
+
+            $fields = [];
+
+            foreach ($newListingData as $field => $value) {
+                $fields[] = $field;
+            }
+
+            $fields = implode(', ', $fields);
+
+            $values = [];
+
+            foreach ($newListingData as $field => $value) {
+                if ($value === '') {
+                    $newListingData[$field] = null;
+                }
+                $values[] = ':' . $field;
+            }
+
+            $values = implode(', ', $values);
+
+            $query = "INSERT INTO listings ({$fields}) VALUES ({$values})";
+
+            $this->db->query($query, $newListingData);
+
+            redirect('/listings');
+        }
+    }
+
+    /**
+     * Delete a listing
+     * 
+     * @param array $params 
+     * @return void
+     */
+    public function destroy($params)
+    {
+        $id = $params['id'];
+        $params = [
+            'id' => $id
+        ];
+
+        $listing = $this->db->query('SELECT * FROM listings WHERE id = :id', $params)->fetch();
+
+        if (!$listing) {
+            ErrorController::notFound('Listing not found');
+            return;
+        }
+
+        $this->db->query('DELETE FROM listings WHERE id = :id', $params);
+
+        // set flash message
+        $_SESSION['success_message'] = 'Listing deleted successfully';
+
+        redirect('/listings');
+    }
+
+    /**
+     * show the listing edit form
+     * @param array $params
+     * @return void
+     */
+    public function edit($params)
+    {
+        $config = require basePath('config/db.php');
+        $db = new Database($config);
+
+        $id = $params['id'] ?? '';
+
+        $params = [
+            'id' => $id,
+        ];
+
+        $listing = $db->query('SELECT * FROM listings WHERE id = :id', $params)->fetch();
+
+        //check if listing exists
+        if (!$listing) {
+            ErrorController::notFound('Listing not found');
+            return;
+        }
+
+        loadView('listings/edit', [
+            'listing' => $listing
+        ]);
+    }
+
+    /**
+     * update a listing
+     * 
+     * @param array $params 
+     * @return void 
+     */
+
+    public function update($params)
+    {
+        $id = $params['id'] ?? '';
+
+        $params = [
+            'id' => $id,
+        ];
+
+        $listing = $this->db->query('SELECT * FROM listings WHERE id = :id', $params)->fetch();
+
+        if (!$listing) {
+            ErrorController::notFound('Listing not found');
+            return;
+        }
+
+        $allowedFields = ['title', 'description', 'salary', 'requirements', 'benefits', 'tags', 'company', 'address', 'city', 'state', 'phone', 'email'];
+
+        $updateValues = [];
+
+        $updateValues = array_intersect_key($_POST, array_flip($allowedFields));
+
+        $updateValues = array_map('sanitize', $updateValues);
+
+        $requiredFields = ['title', 'description', 'salary', 'city', 'state', 'email'];
+
+        $errors = [];
+
+        foreach ($requiredFields as $field) {
+            if (empty($updateValues[$field]) || !Validation::string($updateValues[$field])) {
+                $errors[$field] = ucfirst($field) . ' is required';
+            }
+        }
+
+        if (!empty($errors)) {
+            loadView('listings/edit', [
+                'listing' => $listing,
+                'errors' => $errors
+            ]);
+            exit;
+        } else {
+            // submit to database
+            $updateFields = [];
+
+            foreach ($updateValues as $field => $value) {
+                $updateFields[] = "{$field} = :{$field}";
+            }
+
+            $updateFields = implode(', ', $updateFields);
+
+            $updateQuery = "UPDATE listings SET {$updateFields} WHERE id = :id";
+
+            $updateValues['id'] = $id;
+
+            $this->db->query($updateQuery, $updateValues);
+
+            $_SESSION['success_message'] = 'Listing updated successfully';
+
+            redirect('/listings/' . $id);
+        }
+    }
 }
+
+

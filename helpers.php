@@ -23,10 +23,10 @@ function loadView($name, $data = [])
 
     $viewPath = basePath("App/views/{$name}.view.php");
 
-    if(file_exists($viewPath)){
+    if (file_exists($viewPath)) {
         extract($data);
         require $viewPath;
-    }else{
+    } else {
         echo "View {$name} not found";
     }
 }
@@ -38,12 +38,13 @@ function loadView($name, $data = [])
  * @return void
  */
 
-function loadPartial($name){
+function loadPartial($name)
+{
     $partialPath = basePath("App/views/partials/{$name}.php");
 
-    if(file_exists($partialPath)){
+    if (file_exists($partialPath)) {
         require $partialPath;
-    }else{
+    } else {
         echo "Partial <b>{$name}</b> not found";
     }
 }
@@ -54,7 +55,8 @@ function loadPartial($name){
  * @param mixed $value
  * @return void
  */
-function inspect($value){
+function inspect($value)
+{
     echo "<pre>";
     var_dump($value);
     echo "</pre>";
@@ -67,7 +69,8 @@ function inspect($value){
  * @return void
  */
 
-function inspectAndDie($value){
+function inspectAndDie($value)
+{
     echo "<pre>";
     die(var_dump($value));
     echo "</pre>";
@@ -80,6 +83,32 @@ function inspectAndDie($value){
  * @return string Formatted Salary
  */
 
-function formatSalary($number_format){
+function formatSalary($number_format)
+{
     return '$' . $number_format;
+}
+
+/**
+ * Sanitize Data
+ * 
+ * @param string $dirty
+ * @return string
+ */
+
+function sanitize($dirty)
+{
+    return filter_var(trim($dirty), FILTER_SANITIZE_SPECIAL_CHARS);
+}
+
+/**
+ * Redirect given URL
+ * 
+ * @param string $url
+ * @return void
+ */
+
+function redirect($url)
+{
+    header("Location: {$url}");
+    exit;
 }
