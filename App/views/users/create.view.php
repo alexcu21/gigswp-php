@@ -1,35 +1,50 @@
 <?php loadPartial('head'); ?>
 <?php loadPartial('navbar'); ?>
 
-<section>
-    <div class="container mx-auto p-4 mt-4">
-        <div class="text-center text-3xl mb-4 font-bold border border-gray-300 p-3">Register</div>
-        <?php loadPartial('message'); ?>
-        <form action="/auth/register" method="POST">
+<!-- Registration Form Box -->
+<div class="flex justify-center items-center mt-20">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full md:w-500 mx-6">
+        <h2 class="text-4xl text-center font-bold mb-4">Register</h2>
+        <!-- <div class="message bg-red-100 p-3 my-3">This is an error message.</div>
+        <div class="message bg-green-100 p-3 my-3">
+          This is a success message.
+        </div> -->
+        <form>
             <div class="mb-4">
-                <label for="name" class="block text-gray-700 font-bold mb-2">Name</label>
-                <input type="text" name="name" id="name" class="w-full p-2 border border-gray-300 rounded"
-                    value="<?= $user->name ?>">
+                <input type="text" name="name" placeholder="Full Name"
+                    class="w-full px-4 py-2 border rounded focus:outline-none" />
             </div>
             <div class="mb-4">
-                <label for="email" class="block text-gray-700 font-bold mb-2">Email</label>
-                <input type="email" name="email" id="email" class="w-full p-2 border border-gray-300 rounded"
-                    value="<?= $user->email ?>">
+                <input type="email" name="email" placeholder="Email Address"
+                    class="w-full px-4 py-2 border rounded focus:outline-none" />
             </div>
             <div class="mb-4">
-                <label for="password" class="block text-gray-700 font-bold mb-2">Password</label>
-                <input type="password" name="password" id="password" class="w-full p-2 border border-gray-300 rounded">
+                <input type="text" name="city" placeholder="City"
+                    class="w-full px-4 py-2 border rounded focus:outline-none" />
             </div>
             <div class="mb-4">
-                <label for="password_confirmation" class="block text-gray-700 font-bold mb-2">Confirm Password</label>
-                <input type="password" name="password_confirmation" id="password_confirmation"
-                    class="w-full p-2 border border-gray-300 rounded">
+                <input type="text" name="state" placeholder="State"
+                    class="w-full px-4 py-2 border rounded focus:outline-none" />
             </div>
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Register</button>
+            <div class="mb-4">
+                <input type="password" name="password" placeholder="Password"
+                    class="w-full px-4 py-2 border rounded focus:outline-none" />
+            </div>
+            <div class="mb-4">
+                <input type="password" name="password_confirmation" placeholder="Confirm Password"
+                    class="w-full px-4 py-2 border rounded focus:outline-none" />
+            </div>
+            <button type="submit"
+                class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none">
+                Register
+            </button>
+
+            <p class="mt-4 text-gray-500">
+                Already have an account?
+                <a class="text-blue-900" href="/auth/login">Login</a>
+            </p>
         </form>
     </div>
-</section>
-
-<?php loadPartial('bottom-banner'); ?>
+</div>
 
 <?php loadPartial('footer'); ?>
