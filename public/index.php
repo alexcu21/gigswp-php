@@ -5,12 +5,7 @@ session_start();
 require __DIR__ . '/../vendor/autoload.php';
 require '../helpers.php';
 
-use Framework\Database;
 use Framework\Router;
-
-$config = require basePath('config/db.php');
-
-$db = new Database($config);
 
 //Instatiate the router
 $router = new Router();

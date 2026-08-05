@@ -1,0 +1,22 @@
+{
+  "name": "gigswp",
+  "version": "1.0.0",
+  "description": "A simple PHP job listings application built with a custom MVC-like architecture and styled with Tailwind CSS.",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "type-check": "tsc --noEmit",
+    "report": "playwright show-report",
+    "test:debug": "playwright test --debug"
+    
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/node": "^25.6.0"
+  }
+}
