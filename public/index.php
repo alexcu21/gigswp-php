@@ -1,20 +1,20 @@
 <?php
 
-session_start();
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 
-require __DIR__ . '/../vendor/autoload.php';
-require '../helpers.php';
+define('LARAVEL_START', microtime(true));
 
-use Framework\Router;
+// Determine if the application is in maintenance mode...
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
 
-//Instatiate the router
-$router = new Router();
+// Register the Composer autoloader...
+require __DIR__.'/../vendor/autoload.php';
 
-// Get routes
-$routes = require basePath('routes.php');
+// Bootstrap Laravel and handle the request...
+/** @var Application $app */
+$app = require_once __DIR__.'/../bootstrap/app.php';
 
-//Get current URI and HTTP method
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-//route the request
-$router->route($uri);
+$app->handleRequest(Request::capture());
